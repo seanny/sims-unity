@@ -205,6 +205,30 @@ namespace SimsLib.IFF
             Data[(y * Width) + x] = color;
         }
 
+        public Sprite GetSprite()
+        {
+            if (this.Width == 0 || this.Height == 0)
+            {
+                return null;
+            }
+
+
+            Texture2D tx = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
+
+            Color32[] colours = new Color32[Data.Length];
+            for (int i = 0; i < Data.Length; i++)
+            {
+                colours[i] = Data[i];
+
+            }
+
+            tx.SetPixels32(colours);
+            tx.Apply();
+
+            var sprite = Sprite.Create(tx, new Rect(0, 0, Width, Height), Vector2.zero);
+            return sprite;
+        }
+
         /*public Texture2D GetTexture(GraphicsDevice device)
         {
             var tx = new Texture2D(device, this.Width, this.Height);

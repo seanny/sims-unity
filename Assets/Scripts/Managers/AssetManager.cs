@@ -110,63 +110,22 @@ public class AssetManager : MonoBehaviour
             return;
         }
 
-        if(iff.List<STR>() != null)
+        if (iff.List<FWAV>() != null)
         {
-            foreach (var chunk in iff.List<STR>())
+            foreach (var chunk in iff.List<FWAV>())
             {
-                Debug.Log($"-> Adding STR: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
-                if(chunk.Strings != null && chunk.Strings.Length > 0)
-                {
-                    foreach (var str in chunk.Strings)
-                    {
-                        if (SelectedLangCode == (LangCode)str.LanguageCode - 1)
-                        {
-                            Debug.Log($"-->> LangCode: {((LangCode)str.LanguageCode - 1).ToString()} Comment: {str.Comment} Value: {str.Value}");
-                            m_LoadedStrings.Add(str.Value);
-                        }
-                    }
-                }
+                Debug.Log($"-> Adding FWAV: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
+                SpriteManager.Instance.AddDrawingGroup(chunk);
             }
         }
-        if (iff.List<CTSS>() != null)
+        if (iff.List<BMP>() != null)
         {
-            foreach (var chunk in iff.List<CTSS>())
+            foreach (var chunk in iff.List<BMP>())
             {
-                Debug.Log($"-> Adding CTSS: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
-                if (chunk.Strings != null && chunk.Strings.Length > 0)
-                {
-                    foreach (var str in chunk.Strings)
-                    {
-                        if (SelectedLangCode == (LangCode)str.LanguageCode - 1)
-                        {
-                            Debug.Log($"-->> LangCode: {((LangCode)str.LanguageCode - 1).ToString()} Comment: {str.Comment} Value: {str.Value}");
-                            m_LoadedCatalogStrings.Add(str.Value);
-                        }
-                    }
-                }
+                Debug.Log($"-> Adding BMP: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
+                BitmapManager.Instance.AddBitmap(chunk.ChunkLabel, chunk.Data);
             }
         }
-        if (iff.List<PALT>() != null)
-        {
-            foreach (var chunk in iff.List<PALT>())
-            {
-                Debug.Log($"-> Adding PALT: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
-                if(chunk.Colors.Length > 0)
-                {
-                    LoadedPalt loadedPalt = new LoadedPalt();
-                    loadedPalt.AddColours(chunk.Colors);
-                    m_LoadedPALTs.Add(loadedPalt);
-                }
-            }
-        }
-        /*if (iff.List<OBJD>() != null)
-        {
-            foreach (var chunk in iff.List<OBJD>())
-            {
-                Debug.Log($"-> Adding OBJD: #{chunk.ChunkID} GUID: {chunk.GUID}");
-                m_LoadedOBJDs.Add(chunk);
-            }
-        }*/
         if (iff.List<DGRP>() != null)
         {
             foreach (var chunk in iff.List<DGRP>())
@@ -186,13 +145,18 @@ public class AssetManager : MonoBehaviour
             Far far = new Far(file);
             foreach (var entry in far.Manifest.ManifestEntries)
             {
-                string ext = Path.GetExtension(entry.Filename);
-                Debug.Log($"-> {ext}");
+                string ext = Path.GetExtension(entry.Filename).ToLower();
+                Debug.Log($"-> [{file}] {entry.Filename} (Size: {entry.FileLength1})");
                 if (ext == ".iff")
                 {
                     byte[] bytes = far.GetBytes(entry);
                     Iff iff = new Iff(bytes);
                     LoadIff(iff);
+                }
+                else if (ext == ".bmp")
+                {
+                    byte[] bytes = far.GetBytes(entry);
+                    BitmapManager.Instance.AddBitmap(entry.Filename, bytes);
                 }
             }
         }

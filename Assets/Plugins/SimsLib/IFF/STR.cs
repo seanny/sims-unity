@@ -5,6 +5,7 @@ using System.IO;
 
 namespace SimsLib.IFF
 {
+
     /// <summary>
     /// This chunk type holds text strings.
     /// </summary>

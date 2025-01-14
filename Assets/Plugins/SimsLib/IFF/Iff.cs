@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
+using UnityEngine;
 
 namespace SimsLib.IFF
 {
@@ -25,7 +25,8 @@ namespace SimsLib.IFF
             {"BHAV", typeof(BHAV)},
             {"SLOT", typeof(SLOT)},
             {"BCON", typeof(BCON)},
-            {"CST", typeof(CST)}
+            {"CST", typeof(CST)},
+            {"BMP_", typeof(BMP)}
         };
 
         //Instance
@@ -55,6 +56,7 @@ namespace SimsLib.IFF
                 while (io.HasMore)
                 {
                     var chunkType = io.ReadChars(4);
+                    Debug.Log($"chunkType: {chunkType}");
                     var chunkSize = io.ReadUInt32();
                     var chunkID = io.ReadUInt16();
                     var chunkFlags = io.ReadUInt16();
@@ -86,10 +88,16 @@ namespace SimsLib.IFF
                             ByChunkId.Add(chunkClass, new Dictionary<ushort, object>());
                         }
 
-                        ByChunkType[chunkClass].Add(newChunk);
-                        //if (chunkID != 0){
-                        ByChunkId[chunkClass].Add(chunkID, newChunk);
-                        //}
+                        if (!ByChunkType[chunkClass].Contains(newChunk))
+                        {
+                            ByChunkType[chunkClass].Add(newChunk);
+                        }
+                        if (!ByChunkId[chunkClass].ContainsKey(chunkID))
+                        {
+                            //if (chunkID != 0){
+                            ByChunkId[chunkClass].Add(chunkID, newChunk);
+                            //}
+                        }
                     }
                 }
             }
@@ -121,6 +129,7 @@ namespace SimsLib.IFF
                 while (io.HasMore)
                 {
                     var chunkType = io.ReadChars(4);
+                    Debug.Log($"chunkType: {chunkType}");
                     var chunkSize = io.ReadUInt32();
                     var chunkID = io.ReadUInt16();
                     var chunkFlags = io.ReadUInt16();

@@ -201,29 +201,48 @@ namespace SimsLib.IFF
                 var spr2 = iff.Get<SPR2>((ushort)this.SpriteID);
                 if(spr2 != null)
                 {
-                    Debug.Log($"-->> Getting DGRP.DGRPSprite: #{spr2.ChunkID} ChunkLabel: {spr2.ChunkLabel}");
+                    Debug.Log($"-->> Getting DGRP.DGRPSprite.SPR2: #{spr2.ChunkID} ChunkLabel: {spr2.ChunkLabel}");
                     int frames = 0;
                     if(spr2.Frames != null)
                     {
                         frames = spr2.Frames.Length;
+                    }
+
+                    if (spr2.Frames[this.SpriteFrameIndex] == null)
+                    {
+                        Debug.LogWarning($"spr2.Frame[{SpriteFrameIndex}] was null");
+                        return null;
+                    }
+
+                    return spr2.Frames[this.SpriteFrameIndex].GetSprite();
+                }
+
+                var spr1 = iff.Get<SPR>((ushort)this.SpriteID);
+                if (spr1 != null)
+                {
+                    Debug.Log($"-->> Getting DGRP.DGRPSprite.SPR1: #{spr1.ChunkID} ChunkLabel: {spr1.ChunkLabel}");
+                    int frames = 0;
+                    if (spr1.Frames != null)
+                    {
+                        frames = spr1.Frames.Count;
                         Debug.Log($"Frames: {frames}");
                     }
 
                     Debug.Log($"SpriteFrameIndex: {this.SpriteFrameIndex}");
-                    if (spr2.Frames[this.SpriteFrameIndex] == null)
+                    if (spr1.Frames[(int)this.SpriteFrameIndex] == null)
                     {
                         Debug.LogWarning($"Frame[{SpriteFrameIndex}] was null");
                         return null;
                     }
 
-                    return spr2.Frames[this.SpriteFrameIndex].GetSprite();
+                    return spr1.Frames[(int)this.SpriteFrameIndex].GetSprite();
                 }
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
             }
-            Debug.LogWarning($"No SPR2 data found!");
+            Debug.LogWarning($"No SPR2 or SPR1 data found!");
             return null;
         }
 

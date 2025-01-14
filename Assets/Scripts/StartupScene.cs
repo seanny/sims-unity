@@ -73,6 +73,8 @@ public class StartupScene : MonoBehaviour
         AssetManager.Instance.LoadIffFiles(basePath);
         AssetManager.Instance.LoadFarFiles(basePath);
 
+        Debug.Log($"Loaded {BitmapManager.Instance.Bitmaps.Count} bitmaps!");
+
         FullScreenMode fullScreenMode = FullScreenMode.Windowed;
         if(SettingsManager.Instance.Fullscreen)
         {

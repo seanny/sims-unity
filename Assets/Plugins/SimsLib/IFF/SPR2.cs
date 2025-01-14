@@ -1,3 +1,8 @@
+/*
+    This file was originally written (I assume) for FreeSO to which I've adapted for the Unity engine
+    Original Author(s):
+        - riperiperi
+*/
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -287,6 +292,10 @@ namespace SimsLib.IFF
             PixelData[(y * Width) + x] = color;
         }
 
+        /// <summary>
+        /// Get the unity sprite of the SPR2
+        /// </summary>
+        /// <returns>Unity sprite of the SPR2</returns>
         public Sprite GetSprite()
         {
             if (this.Width == 0 || this.Height == 0)
@@ -296,19 +305,10 @@ namespace SimsLib.IFF
 
 
             Texture2D tx = new Texture2D(Width, Height, TextureFormat.RGBA32, false);
-
             Color32[] colours = new Color32[PixelData.Length];
             for(int i = 0; i < PixelData.Length; i++)
             {
                 colours[i] = PixelData[i];
-                /*if (AlphaData[i] != null)
-                {
-                    colours[i].a = AlphaData[i];
-                }
-                else*/
-                {
-                    colours[i].a = 255;
-                }
             }
 
             tx.SetPixels32(colours);
