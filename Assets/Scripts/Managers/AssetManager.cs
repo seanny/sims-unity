@@ -110,24 +110,18 @@ public class AssetManager : MonoBehaviour
             return;
         }
 
-        if (iff.List<FWAV>() != null)
-        {
-            foreach (var chunk in iff.List<FWAV>())
-            {
-                Debug.Log($"-> Adding FWAV: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
-                SpriteManager.Instance.AddDrawingGroup(chunk);
-            }
-        }
         if (iff.List<BMP>() != null)
         {
+            Debug.Log($"Loading {iff.Count<BMP>()} BMP_ chunks.");
             foreach (var chunk in iff.List<BMP>())
             {
-                Debug.Log($"-> Adding BMP: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
+                Debug.Log($"-> Adding BMP_: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
                 BitmapManager.Instance.AddBitmap(chunk.ChunkLabel, chunk.Data);
             }
         }
         if (iff.List<DGRP>() != null)
         {
+            Debug.Log($"Loading {iff.Count<DGRP>()} DGRP chunks.");
             foreach (var chunk in iff.List<DGRP>())
             {
                 Debug.Log($"-> Adding DGRP: #{chunk.ChunkID} Label: {chunk.ChunkLabel}");
@@ -139,25 +133,38 @@ public class AssetManager : MonoBehaviour
     public void LoadFarFiles(string basePath)
     {
         string gameData = Path.Combine(basePath, "GameData");
+        string soundDataFar = Path.Combine(gameData, "..", "SoundData", "SoundData.far");
+        LoadFarFile(soundDataFar);
+
         foreach (string file in Directory.EnumerateFiles(gameData, "*.far", SearchOption.AllDirectories))
         {
-            Debug.Log($"Loading FAR {file}...");
-            Far far = new Far(file);
-            foreach (var entry in far.Manifest.ManifestEntries)
+            LoadFarFile(file);
+        }
+    }
+
+    private void LoadFarFile(string file)
+    {
+        Debug.Log($"Loading FAR {file}...");
+        Far far = new Far(file);
+        foreach (var entry in far.Manifest.ManifestEntries)
+        {
+            string ext = Path.GetExtension(entry.Filename).ToLower();
+            Debug.Log($"-> [{file}] {entry.Filename} (Size: {entry.FileLength1})");
+            if (ext == ".iff")
             {
-                string ext = Path.GetExtension(entry.Filename).ToLower();
-                Debug.Log($"-> [{file}] {entry.Filename} (Size: {entry.FileLength1})");
-                if (ext == ".iff")
-                {
-                    byte[] bytes = far.GetBytes(entry);
-                    Iff iff = new Iff(bytes);
-                    LoadIff(iff);
-                }
-                else if (ext == ".bmp")
-                {
-                    byte[] bytes = far.GetBytes(entry);
-                    BitmapManager.Instance.AddBitmap(entry.Filename, bytes);
-                }
+                byte[] bytes = far.GetBytes(entry);
+                Iff iff = new Iff(bytes);
+                LoadIff(iff);
+            }
+            else if (ext == ".bmp")
+            {
+                byte[] bytes = far.GetBytes(entry);
+                BitmapManager.Instance.AddBitmap(entry.Filename, bytes);
+            }
+            else if (ext == ".xa")
+            {
+                byte[] bytes = far.GetBytes(entry);
+                AudioManager.Instance.AddXA(entry.Filename, bytes);
             }
         }
     }

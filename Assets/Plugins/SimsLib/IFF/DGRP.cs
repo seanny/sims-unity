@@ -242,7 +242,6 @@ namespace SimsLib.IFF
             {
                 Debug.LogException(e);
             }
-            Debug.LogWarning($"No SPR2 or SPR1 data found!");
             return null;
         }
 

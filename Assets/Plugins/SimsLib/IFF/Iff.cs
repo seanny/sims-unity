@@ -26,7 +26,8 @@ namespace SimsLib.IFF
             {"SLOT", typeof(SLOT)},
             {"BCON", typeof(BCON)},
             {"CST", typeof(CST)},
-            {"BMP_", typeof(BMP)}
+            {"BMP_", typeof(BMP)},
+            {"FWAV", typeof(FWAV)}
         };
 
         //Instance
@@ -226,6 +227,16 @@ namespace SimsLib.IFF
                 return result;
             }
             return null;
+        }
+
+        public int Count<T>()
+        {
+            Type type = typeof(T);
+            if(ByChunkType.ContainsKey(type))
+            {
+                return ByChunkType[type].Count;
+            }
+            return 0;
         }
     }
 }
